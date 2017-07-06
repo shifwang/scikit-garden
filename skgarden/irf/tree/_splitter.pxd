@@ -30,7 +30,6 @@ cdef struct SplitRecord:
     double improvement     # Impurity improvement given parent node.
     double impurity_left   # Impurity of the left split.
     double impurity_right  # Impurity of the right split.
-    double E               # Time of split.
 
 cdef class Splitter:
     # The splitter searches in the input space for a feature and a threshold
@@ -41,6 +40,8 @@ cdef class Splitter:
     # Internal structures
     cdef public Criterion criterion      # Impurity criterion
     cdef public SIZE_t max_features      # Number of features to test
+    cdef public SIZE_t min_samples_leaf  # Min samples in a leaf
+    cdef public double min_weight_leaf   # Minimum weight in a leaf
 
     cdef object random_state             # Random state
     cdef UINT32_t rand_r_state           # sklearn_rand_r random number state
@@ -62,9 +63,7 @@ cdef class Splitter:
     cdef DOUBLE_t* y
     cdef SIZE_t y_stride
     cdef DOUBLE_t* sample_weight
-    cdef DTYPE_t* upper_bounds           # Store the upper_bounds
-    cdef DTYPE_t* lower_bounds           # Store the lower bounds
-
+    cdef DOUBLE_t* feature_weight
 
     # The samples vector `samples` is maintained by the Splitter object such
     # that the samples contained in a node are contiguous. With this setting,
@@ -85,6 +84,7 @@ cdef class Splitter:
     # Methods
     cdef int init(self, object X, np.ndarray y,
                   DOUBLE_t* sample_weight,
+                  DOUBLE_t* feature_weight,
                   np.ndarray X_idx_sorted=*) except -1
 
     cdef int node_reset(self, SIZE_t start, SIZE_t end,
@@ -98,5 +98,3 @@ cdef class Splitter:
     cdef void node_value(self, double* dest) nogil
 
     cdef double node_impurity(self) nogil
-
-    cdef void set_bounds(self) nogil
