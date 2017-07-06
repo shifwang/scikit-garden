@@ -5,7 +5,7 @@ CYTHON_MIN_VERSION = '0.23'
 def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
 
-    config = Configuration('mondrian', parent_package, top_path)
+    config = Configuration('irf', parent_package, top_path)
     config.add_subpackage('tree')
     config.add_subpackage('ensemble')
 
